@@ -75,7 +75,7 @@ const app = new App({
 
 ## Reactivity
 
-### Click handler
+### Click handler example
 
 ```sveltehtml
 <script>
@@ -116,12 +116,13 @@ from a firstname and a lastname), and recomputed whenever they change:
 <p>{count} doubled is {doubled}</p>
 ```
 
-#### Log the value of a state variable whenever it changes
+Log the value of a state variable whenever it changes
 
 ```sveltehtml
 $: console.log(`the count is ${count}`);
 ```
-#### Group statements together with a block
+
+Group statements together with a block
 
 ```sveltehtml
 $: {
@@ -129,7 +130,8 @@ $: {
         alert(`I SAID THE COUNT IS ${count}`);
 }
 ```
-#### You can even put the $: in front of things like if blocks:
+
+You can even put the $: in front of things like if blocks:
 
 ```sveltehtml
 $: if (count >= 10) {
