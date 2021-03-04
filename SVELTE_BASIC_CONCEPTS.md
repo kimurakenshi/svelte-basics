@@ -1,18 +1,17 @@
 # Svelte 
 
-- [Svelte](#svelte)
-    * [Introduction](#introduction)
-        + [Basic Component Structure](#basic-component-structure)
-        + [Shorthand attributes](#shorthand-attributes)
-        + [Render HTML directly into a component](#render-html-directly-into-a-component)
-    * [Making an APP](#making-an-app)
-    * [Reactivity](#reactivity)
-        + [`on:click`](#-on-click-)
-        + [Reactive declarations](#reactive-declarations)
-            - [Log the value of a state variable whenever it changes](#log-the-value-of-a-state-variable-whenever-it-changes)
-            - [Group statements together with a block](#group-statements-together-with-a-block)
-            - [You can even put the $: in front of things like if blocks:](#you-can-even-put-the----in-front-of-things-like-if-blocks-)
-    * [Props](#props)
+- [Introduction](#introduction)
+    * [Basic Component Structure](#basic-component-structure)
+    * [Shorthand attributes](#shorthand-attributes)
+    * [Render HTML directly into a component](#render-html-directly-into-a-component)
+- [Making an APP](#making-an-app)
+- [Reactivity](#reactivity)
+    * [`on:click`](#-on-click-)
+    * [Reactive declarations](#reactive-declarations)
+        + [Log the value of a state variable whenever it changes](#log-the-value-of-a-state-variable-whenever-it-changes)
+        + [Group statements together with a block](#group-statements-together-with-a-block)
+        + [You can even put the $: in front of things like if blocks:](#you-can-even-put-the----in-front-of-things-like-if-blocks-)
+- [Props](#props)
 
 ## Introduction
 
