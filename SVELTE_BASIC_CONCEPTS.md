@@ -40,7 +40,12 @@
   * [onDestroy](#ondestroy)
   * [beforeUpdate and afterUpdate](#beforeupdate-and-afterupdate)
   * [tick](#tick)
-
+- [Stores](#stores)
+  * [Writeable Store](#writeable-store)
+  * [Auto-subscriptions](#auto-subscriptions)
+  * [Readable stores](#readable-stores)
+  * [Derived stores](#derived-stores)
+- [Custom stores](#custom-stores)
 
 ## Introduction
 
@@ -781,5 +786,90 @@ it immediately before we set this.selectionStart and this.selectionEnd at the en
 ```
 
 ## Stores
+
+### Writeable Store
+
+Not all application state belongs inside your application's component hierarchy. Sometimes, 
+you'll have values that need to be accessed by multiple unrelated components, or by a regular JavaScript module.
+In Svelte, we do this with stores. A store is simply an object with a `subscribe` method that allows interested parties to
+be notified whenever the store value changes. A writable store, has `set` and `update` methods in addition to subscribe.
+
+
+### Auto-subscriptions
+
+To avoid boilerplate code like this:
+
+```sveltehtml
+<script>
+	import { onDestroy } from 'svelte';
+	import { count } from './stores.js';
+	import Incrementer from './Incrementer.svelte';
+	import Decrementer from './Decrementer.svelte';
+	import Resetter from './Resetter.svelte';
+
+	let count_value;
+
+	const unsubscribe = count.subscribe(value => {
+		count_value = value;
+	});
+
+	onDestroy(unsubscribe);
+</script>
+```
+
+We can reference a store value by prefixing the store name with `$`:
+
+```sveltehtml
+<script>
+	import { count } from './stores.js';
+	import Incrementer from './Incrementer.svelte';
+	import Decrementer from './Decrementer.svelte';
+	import Resetter from './Resetter.svelte';
+</script>
+
+<h1>The count is {$count}</h1>
+```
+
+>Auto-subscription only works with store variables that are declared (or imported) at the top-level scope of a component. 
+> You're not limited to using $count inside the markup, either — you can use it anywhere in the `<script>` as well, such 
+> as in event handlers or reactive declarations.
+
+### Readable stores
+
+For those cased where it does not make sense to allow components to set the store values from the outside.
+
+```sveltehtml
+import { readable } from 'svelte/store';
+
+export const time = readable(new Date(), function start(set) {
+	const interval = setInterval(() => {
+		set(new Date());
+	}, 1000);
+
+	return function stop() {
+		clearInterval(interval);
+	};
+});
+```
+
+The first argument to readable is an `initial value`, which can be null or undefined if you don't have one yet. 
+The second argument is a `start function` that takes a `set callback` and returns a `stop function`. The start function is 
+called when the store gets its first subscriber; stop is called when the last subscriber unsubscribes.
+
+### Derived stores
+
+You can create a store whose value is based on the value of one or more other stores with derived.
+
+```js
+export const elapsed = derived(
+	time,
+	$time => Math.round(($time - start) / 1000)
+);
+```
+
+> It's possible to derive a store from multiple inputs, and to explicitly set a value instead of returning it 
+(which is useful for deriving values asynchronously). [More info](https://svelte.dev/docs#derived) 
+
+## Custom stores
 
 [TBD]
