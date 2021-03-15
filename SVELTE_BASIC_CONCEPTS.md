@@ -36,6 +36,10 @@
   * [This](#this)
   * [Component bindings](#component-bindings)
 - [Lifecycle](#lifecycle)
+  * [onMount](#onmount)
+  * [onDestroy](#ondestroy)
+  * [beforeUpdate and afterUpdate](#beforeupdate-and-afterupdate)
+  * [tick](#tick)
 
 
 ## Introduction
@@ -658,5 +662,124 @@ form element:
 > too many of them, especially if there is no 'single source of truth'.
 
 ## Lifecycle
+
+### onMount
+
+Runs after the component is first rendered to the DOM. 
+
+```sveltehtml
+<script>
+	import { onMount } from 'svelte';
+
+	let photos = [];
+
+	onMount(async () => {
+		const res = await fetch(`https://jsonplaceholder.typicode.com/photos?_limit=20`);
+		photos = await res.json();
+	});
+</script>
+```
+
+> It's recommended to put the fetch in onMount rather than at the top level of the `<script>` because of server-side 
+> rendering (SSR). With the exception of onDestroy, lifecycle functions don't run during SSR, which means we can avoid 
+> fetching data that should be loaded lazily once the component has been mounted in the DOM.
+
+> If the `onMount` callback returns a function, that function will be called when the component is destroyed.
+
+### onDestroy
+
+To run code when your component is destroyed.
+
+```sveltehtml
+<script>
+	import { onDestroy } from 'svelte';
+
+	let seconds = 0;
+	const interval = setInterval(() => seconds += 1, 1000);
+
+	onDestroy(() => clearInterval(interval));
+</script>
+```
+
+### beforeUpdate and afterUpdate
+
+The `beforeUpdate` function schedules work to happen immediately before the DOM has been updated. 
+`afterUpdate` is its counterpart, used for running code once the DOM is in sync with your data.
+
+```sveltehtml
+<script>
+	import { beforeUpdate, afterUpdate } from 'svelte';
+
+	let div;
+	let autoscroll;
+
+	beforeUpdate(() => {
+		autoscroll = div && (div.offsetHeight + div.scrollTop) > (div.scrollHeight - 20);
+	});
+
+	afterUpdate(() => {
+		if (autoscroll) div.scrollTo(0, div.scrollHeight);
+	});
+</script>
+```
+
+> Note that `beforeUpdate` will first run before the component has mounted, so we need to check for the existence of div 
+> before reading its properties.
+
+### tick
+
+The tick function is unlike other lifecycle functions in that you can call it any time, not just when the component 
+first initialises. It returns a promise that resolves as soon as any pending state changes have been applied to the 
+DOM (or immediately, if there are no pending state changes).
+
+When you update component state in Svelte, it doesn't update the DOM immediately. Instead, it waits until the next microtask 
+to see if there are any other changes that need to be applied, including in other components. Doing so avoids unnecessary 
+work and allows the browser to batch things more effectively.
+
+You can see that behaviour in this example. Select a range of text and hit the tab key. Because the `<textarea>` value changes, 
+the current selection is cleared and the cursor jumps, annoyingly, to the end. We can fix this by importing tick ...and running 
+it immediately before we set this.selectionStart and this.selectionEnd at the end of handleKeydown:
+
+```sveltehtml
+<script>
+	import { tick } from 'svelte';
+
+	let text = `Select some text and hit the tab key to toggle uppercase`;
+
+	async function handleKeydown(event) {
+		if (event.key !== 'Tab') return;
+
+		event.preventDefault();
+
+		const { selectionStart, selectionEnd, value } = this;
+		const selection = value.slice(selectionStart, selectionEnd);
+
+		const replacement = /[a-z]/.test(selection)
+			? selection.toUpperCase()
+			: selection.toLowerCase();
+
+		text = (
+			value.slice(0, selectionStart) +
+			replacement +
+			value.slice(selectionEnd)
+		);
+
+		await tick();
+		this.selectionStart = selectionStart;
+		this.selectionEnd = selectionEnd;
+	}
+</script>
+
+<style>
+	textarea {
+		width: 100%;
+		height: 200px;
+	}
+</style>
+
+<textarea value={text} on:keydown={handleKeydown}></textarea>
+```
+
+## Stores
 
 [TBD]
