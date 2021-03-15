@@ -45,7 +45,7 @@
   * [Auto-subscriptions](#auto-subscriptions)
   * [Readable stores](#readable-stores)
   * [Derived stores](#derived-stores)
-- [Custom stores](#custom-stores)
+  * [Custom stores](#custom-stores)
 
 ## Introduction
 
