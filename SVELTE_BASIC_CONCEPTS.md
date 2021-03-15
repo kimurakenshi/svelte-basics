@@ -302,3 +302,289 @@ As we've briefly seen already, you can listen to any event on an element with th
 	The mouse position is {m.x} x {m.y}
 </div>
 ```
+### Event Handlers Inline:
+
+```sveltehtml
+<div on:mousemove="{e => m = { x: e.clientX, y: e.clientY }}">
+	The mouse position is {m.x} x {m.y}
+</div>
+```
+
+### Event Modifiers
+
+```sveltehtml
+<button on:click|once={handleClick}>
+	Click me
+</button>
+```
+
+The full list of modifiers:
+
+- `preventDefault` — calls event.preventDefault() before running the handler. Useful for client-side form handling, for example.
+- `stopPropagation` — calls event.stopPropagation(), preventing the event reaching the next element
+- `passive` — improves scrolling performance on touch/wheel events (Svelte will add it automatically where it's safe to do so)
+- `nonpassive` — explicitly set passive: false
+- `capture` — fires the handler during the capture phase instead of the bubbling phase 
+- `once` — remove the handler after the first time it runs
+- `self` — only trigger handler if event.target is the element itself
+
+You can chain modifiers together, e.g. `on:click|once|capture={...}`.
+
+### Component Events
+
+Components can also dispatch events. To do so, they must create an event dispatcher.
+
+> `createEventDispatcher` must be called when the component is first instantiated — you can't do it later inside e.g. a setTimeout 
+callback. This links dispatch to the component instance.
+
+```sveltehtml
+<script>
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+
+	function sayHello() {
+		dispatch('message', {
+			text: 'Hello!'
+		});
+	}
+</script>
+```
+
+and to listen to this event We would do:
+
+```sveltehtml
+<SomeComponent on:message={handleMessage}/>
+```
+
+The directive to listen to events is an attribute prefixed with `on:` followed by the `event name` that we are dispatching.
+
+### Event forwarding
+
+Unlike DOM events, component events don't bubble. If you want to listen to an event on some deeply nested component, 
+the intermediate components must forward the event.
+
+An `on:message` event directive without a value means 'forward all message events'.
+
+In the following component hierarchy:
+
+```sveltehtml
+<App>
+  <Outer>
+    <Inner/>
+  </Outer>
+</App>
+```
+
+Outer component can forward events emitted by Inner component like so:
+
+```sveltehtml
+<script>
+	import Inner from './Inner.svelte';
+</script>
+
+<Inner on:message/>
+```
+
+> NOTE: Event forwarding works for DOM events too. (ex: `<button on:click>`)
+ 
+## Bindings
+
+As a general rule, data flow in Svelte is top down — a parent component can set props on a child component, 
+and a component can set attributes on an element, but not the other way around.
+
+Sometimes it's useful to break that rule and that the reason `bind` exists.
+
+### Text Inputs
+
+```sveltehtml
+<input bind:value={name}>
+```
+
+This means that not only will changes to the value of name update the input value, 
+but changes to the input value will update name.
+
+### Checkbox Inputs
+
+```sveltehtml
+<script>
+  let yes = false;
+</script>
+
+<input type=checkbox bind:checked={yes}>
+```
+
+### Group Inputs
+
+If you have multiple inputs relating to the same value, you can use `bind:group` along with the value attribute. 
+Radio inputs in the same group are mutually exclusive; checkbox inputs in the same group form an array of selected values.
+
+```sveltehtml
+<script>
+	let scoops = 1;
+	let flavours = ['Mint choc chip'];
+
+	let menu = [
+		'Cookies and cream',
+		'Mint choc chip',
+		'Raspberry ripple'
+	];
+</script>
+
+<h2>Size</h2>
+
+<label>
+	<input type=radio bind:group={scoops} value={1}>
+	One scoop
+</label>
+
+<label>
+	<input type=radio bind:group={scoops} value={2}>
+	Two scoops
+</label>
+
+<label>
+	<input type=radio bind:group={scoops} value={3}>
+	Three scoops
+</label>
+
+<h2>Flavours</h2>
+
+{#each menu as flavour}
+	<label>
+		<input type=checkbox bind:group={flavours} value={flavour}>
+		{flavour}
+	</label>
+{/each}
+```
+
+### Textarea Inputs
+
+```sveltehtml
+<script>
+  let value = `Some words are *italic*, some are **bold**`;
+</script>
+
+<textarea bind:value></textarea>
+```
+
+### Select
+
+```sveltehtml
+<script>
+	let questions = [
+		{ id: 1, text: `Where did you go to school?` },
+		{ id: 2, text: `What is your mother's name?` },
+		{ id: 3, text: `What is another personal fact that an attacker could easily find with Google?` }
+	];
+
+	let selected;
+
+	let answer = '';
+
+	function handleSubmit() {
+		alert(`answered question ${selected.id} (${selected.text}) with "${answer}"`);
+	}
+</script>
+
+<h2>Insecurity questions</h2>
+
+<form on:submit|preventDefault={handleSubmit}>
+	<select bind:value={selected} on:change="{() => answer = ''}">
+		{#each questions as question}
+			<option value={question}>
+				{question.text}
+			</option>
+		{/each}
+	</select>
+
+	<input bind:value={answer}>
+
+	<button disabled={!answer} type=submit>
+		Submit
+	</button>
+</form>
+```
+
+>  `<option>` values are objects rather than strings. 
+
+### Select Multiple
+
+A select can have a multiple attribute, in which case it will populate an array rather than selecting a single value:
+
+```sveltehtml
+<script>
+  let menu = [
+    'Cookies and cream',
+    'Mint choc chip',
+    'Raspberry ripple'
+  ];
+  
+  let flavours = ['Mint choc chip'];
+</script>
+<select multiple bind:value={flavours}>
+	{#each menu as flavour}
+		<option value={flavour}>
+			{flavour}
+		</option>
+	{/each}
+</select>
+```
+
+### Content editable bindings
+
+Elements with a `contenteditable="true"` attribute support `textContent` and `innerHTML` bindings:
+
+```sveltehtml
+<div
+	contenteditable="true"
+	bind:innerHTML={html}
+></div>
+```
+
+### Each block bindings
+
+You can even bind to properties inside an each block.
+
+```sveltehtml
+{#each todos as todo}
+	<div class:done={todo.done}>
+		<input
+			type=checkbox
+			bind:checked={todo.done}
+		>
+
+		<input
+			placeholder="What needs to be done?"
+			bind:value={todo.text}
+		>
+	</div>
+{/each}
+```
+
+> Note that interacting with these `<input>` elements will mutate the array. If you prefer to work with immutable data, 
+you should avoid these bindings and use event handlers instead.
+
+
+### Media elements
+
+The `<audio>` and `<video>` elements have several properties that you can bind to. This example demonstrates a few of them- ````
+
+The complete set of bindings for `<audio>` and `<video>` is as follows — six readonly bindings...
+
+- `duration` (readonly) — the total duration of the video, in seconds
+- `buffered` (readonly) — an array of {start, end} objects
+- `seekable` (readonly) — ditto
+- `played` (readonly) — ditto
+- `seeking` (readonly) — boolean
+- `ended` (readonly) — boolean
+
+...and five two-way bindings:
+
+- `currentTime` — the current point in the video, in seconds
+- `playbackRate` — how fast to play the video, where 1 is 'normal'
+- `paused` — this one should be self-explanatory
+- `volume` — a value between 0 and 1
+- `muted` — a boolean value where true is muted
+
+Videos additionally have readonly videoWidth and videoHeight bindings.
