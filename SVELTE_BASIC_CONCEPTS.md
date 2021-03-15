@@ -870,6 +870,6 @@ export const elapsed = derived(
 > It's possible to derive a store from multiple inputs, and to explicitly set a value instead of returning it 
 (which is useful for deriving values asynchronously). [More info](https://svelte.dev/docs#derived) 
 
-## Custom stores
+### Custom stores
 
 [TBD]
