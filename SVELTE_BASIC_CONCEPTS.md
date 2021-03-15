@@ -18,6 +18,24 @@
   * [Keyed Each blocks](#keyed-each-blocks)
   * [Await blocks](#await-blocks)
 - [Events](#events)
+  * [Event Handlers Inline:](#event-handlers-inline-)
+  * [Event Modifiers](#event-modifiers)
+  * [Component Events](#component-events)
+  * [Event forwarding](#event-forwarding)
+- [Bindings](#bindings)
+  * [Text Inputs](#text-inputs)
+  * [Checkbox Inputs](#checkbox-inputs)
+  * [Group Inputs](#group-inputs)
+  * [Textarea Inputs](#textarea-inputs)
+  * [Select](#select)
+  * [Select Multiple](#select-multiple)
+  * [Content editable bindings](#content-editable-bindings)
+  * [Each block bindings](#each-block-bindings)
+  * [Media elements](#media-elements)
+  * [Dimensions](#dimensions)
+  * [This](#this)
+  * [Component bindings](#component-bindings)
+- [Lifecycle](#lifecycle)
 
 
 ## Introduction
@@ -587,4 +605,58 @@ The complete set of bindings for `<audio>` and `<video>` is as follows — six r
 - `volume` — a value between 0 and 1
 - `muted` — a boolean value where true is muted
 
-Videos additionally have readonly videoWidth and videoHeight bindings.
+Videos additionally have readonly `videoWidth` and `videoHeight` bindings.
+
+### Dimensions
+
+Every `block-level` element has clientWidth, clientHeight, offsetWidth and offsetHeight read-only bindings:
+
+```sveltehtml
+<div bind:clientWidth={w} bind:clientHeight={h}>
+	<span style="font-size: {size}px">{text}</span>
+</div>
+```
+
+### This
+
+The readonly this binding applies to every element (and component) and allows you to obtain a reference to rendered elements. 
+For example, we can get a reference to a `<canvas>` element:
+
+```sveltehtml
+<canvas
+	bind:this={canvas}
+	width={32}
+	height={32}
+></canvas>
+```
+
+> Note that the value of canvas will be undefined until the component has mounted, so we put the logic inside the onMount life cycle function.
+
+### Component bindings
+
+Just as you can bind to properties of DOM elements, you can bind to component props. For example, we can bind to the value prop of this `<Keypad>` component as though it were a 
+form element:
+
+```sveltehtml
+<script>
+  import Keypad from './Keypad.svelte';
+
+  let pin;
+  $: view = pin ? pin.replace(/\d(?!$)/g, '•') : 'enter your pin';
+
+  function handleSubmit() {
+    alert(`submitted ${pin}`);
+  }
+</script>
+
+<h1 style="color: {pin ? '#333' : '#ccc'}">{view}</h1>
+
+<Keypad bind:value={pin} on:submit={handleSubmit}/>
+```
+
+> Use component bindings sparingly. It can be difficult to track the flow of data around your application if you have 
+> too many of them, especially if there is no 'single source of truth'.
+
+## Lifecycle
+
+[TBD]
