@@ -1,5 +1,4 @@
 # Svelte 
-
 - [Introduction](#introduction)
   * [Basic Component Structure](#basic-component-structure)
   * [Shorthand attributes](#shorthand-attributes)
@@ -46,6 +45,8 @@
   * [Readable stores](#readable-stores)
   * [Derived stores](#derived-stores)
   * [Custom stores](#custom-stores)
+  * [Store bindings](#store-bindings)
+- [Motion](#motion)
 
 ## Introduction
 
@@ -871,5 +872,65 @@ export const elapsed = derived(
 (which is useful for deriving values asynchronously). [More info](https://svelte.dev/docs#derived) 
 
 ### Custom stores
+
+As long as an object correctly implements the subscribe method, it's a store. Beyond that, anything goes. 
+It's very easy, therefore, to create custom stores with domain-specific logic.
+
+For example, the count store from our earlier example could include increment, decrement and reset methods 
+and avoid exposing set and update:
+
+```js
+import { writable } from 'svelte/store';
+
+function createCount() {
+        const { subscribe, set, update } = writable(0);
+
+        return {
+        subscribe,
+        increment: () => update(n => n + 1),
+        decrement: () => update(n => n - 1),
+        reset: () => set(0)
+};
+}
+
+export const count = createCount();
+```
+
+### Store bindings
+
+If a store is writable you can bind to its value, just as you can bind to local component state.
+
+For example having this two stores:
+
+```js
+import { writable, derived } from 'svelte/store';
+
+export const name = writable('world');
+
+export const greeting = derived(
+	name,
+	$name => `Hello ${$name}!`
+);
+```
+
+and the following component:
+
+```sveltehtml
+<script>
+	import { name, greeting } from './stores.js';
+</script>
+
+<h1>{$greeting}</h1>
+<input bind:value={$name}>
+
+<button on:click="{() => $name += '!'}">
+	Add exclamation mark!
+</button>
+```
+
+- Changing the input value will now update name and all its dependents.
+- We can also assign directly to store values inside a component. The `$name += '!'` assignment is equivalent to `name.set($name + '!')`.
+
+## Motion
 
 [TBD]
