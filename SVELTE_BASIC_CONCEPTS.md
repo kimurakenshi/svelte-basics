@@ -157,3 +157,138 @@ foo.bar = 'baz';
 ...won't update references to obj.foo.bar, unless you follow it up with obj = obj.
 
 ## Props
+
+Props are declared with the `export` keyword:
+
+```sveltehtml
+<script>
+	export let answer;
+</script>
+```
+
+### Spread props
+
+If you have an object of properties, you can 'spread' them onto a component instead of specifying each one:
+
+```sveltehtml
+<script>
+  import Info from './Info.svelte';
+
+  const pkg = {
+    name: 'svelte',
+    version: 3,
+    speed: 'blazing',
+    website: 'https://svelte.dev'
+  };
+</script>
+
+<Info {...pkg}/>
+```
+
+And the above object is matching the properties declared in the `Info` component:
+
+```sveltehtml
+<script>
+	export let name;
+	export let version;
+	export let speed;
+	export let website;
+</script>
+```
+
+## Logic
+
+### If blocks
+
+```sveltehtml
+{#if user.loggedIn}
+	<button on:click={toggle}>
+		Log out
+	</button>
+{/if}
+```
+
+### Else blocks
+
+```sveltehtml
+{#if user.loggedIn}
+	<button on:click={toggle}>
+		Log out
+	</button>
+{:else}
+	<button on:click={toggle}>
+		Log in
+	</button>
+{/if}
+```
+
+### Else If blocks
+
+```sveltehtml
+{#if x > 10}
+	<p>{x} is greater than 10</p>
+{:else if 5 > x}
+	<p>{x} is less than 5</p>
+{:else}
+	<p>{x} is between 5 and 10</p>
+{/if}
+```
+
+### Each blocks
+
+```sveltehtml
+<ul>
+	{#each cats as cat} 
+		<li><a target="_blank" href="https://www.youtube.com/watch?v={cat.id}">
+			{cat.name}
+		</a></li>
+	{/each}
+</ul>
+```    
+> NOTE 1: `{#each cats as cat, i}` to get the index.
+
+> NOTE 2: `{#each cats as { id, name }, i}` to destructure.
+
+### Keyed Each blocks
+
+By default, when you modify the value of an each block, it will add and remove items at the end of the block, 
+and update any values that have changed. That might not be what you want. If Instead, we'd like to remove only what has changed
+and leave the rest unaffected, we could use an unique identifier for the each block:
+
+```sveltehtml
+{#each things as thing (thing.id)}
+	<Thing current={thing.color}/>
+{/each}
+```
+The (thing.id) tells Svelte how to figure out what changed.
+
+### Await blocks
+
+```sveltehtml
+{#await promise}
+	<p>...waiting</p>
+{:then number}
+	<p>The number is {number}</p>
+{:catch error}
+	<p style="color: red">{error.message}</p>
+{/await}
+```
+
+If you know that your promise can't reject, you can omit the catch block. 
+You can also omit the first block if you don't want to show anything until the promise resolves:
+
+```sveltehtml
+{#await promise then value}
+	<p>the value is {value}</p>
+{/await}
+```
+
+## Events
+
+As we've briefly seen already, you can listen to any event on an element with the on: directive:
+
+```sveltehtml
+<div on:mousemove={handleMousemove}>
+	The mouse position is {m.x} x {m.y}
+</div>
+```
