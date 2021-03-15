@@ -1,14 +1,24 @@
 # Svelte 
 
 - [Introduction](#introduction)
-    * [Basic Component Structure](#basic-component-structure)
-    * [Shorthand attributes](#shorthand-attributes)
-    * [Render HTML directly into a component](#render-html-directly-into-a-component)
+  * [Basic Component Structure](#basic-component-structure)
+  * [Shorthand attributes](#shorthand-attributes)
+  * [Render HTML directly into a component](#render-html-directly-into-a-component)
 - [Making an APP](#making-an-app)
 - [Reactivity](#reactivity)
-    * [Click handler example](#click-handler-example)
-    * [Reactive declarations](#reactive-declarations)
+  * [Click handler example](#click-handler-example)
+  * [Reactive declarations](#reactive-declarations)
 - [Props](#props)
+  * [Spread props](#spread-props)
+- [Logic](#logic)
+  * [If blocks](#if-blocks)
+  * [Else blocks](#else-blocks)
+  * [Else If blocks](#else-if-blocks)
+  * [Each blocks](#each-blocks)
+  * [Keyed Each blocks](#keyed-each-blocks)
+  * [Await blocks](#await-blocks)
+- [Events](#events)
+
 
 ## Introduction
 
