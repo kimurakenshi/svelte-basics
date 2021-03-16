@@ -1655,3 +1655,124 @@ const { these, are, stores } = getContext(key);
 ```
 
 ## Special Elements
+
+Svelte provides a variety of built-in elements. 
+
+### `<svelte:self>`
+
+Allows a component to contain itself recursively.
+
+In this example the main component represents a folder and in order to represent a tree view
+where the component can render itself we could do something like this:
+
+```sveltehtml
+{#if file.type === 'folder'}
+	<svelte:self {...file}/>
+{:else}
+	<File {...file}/>
+{/if}
+```
+
+### `<svelte:component>`
+
+To dynamically render a component.
+
+```sveltehtml
+<svelte:component this={selected.component}/>
+```
+
+The `this` value can be any component constructor, or a falsy value — if it's falsy, no component is rendered.
+
+For example:
+
+```sveltehtml
+<script>
+	import RedThing from './RedThing.svelte';
+	import GreenThing from './GreenThing.svelte';
+	import BlueThing from './BlueThing.svelte';
+
+	const options = [
+		{ color: 'red',   component: RedThing   },
+		{ color: 'green', component: GreenThing },
+		{ color: 'blue',  component: BlueThing  },
+	];
+
+	let selected = options[0];
+</script>
+
+<select bind:value={selected}>
+	{#each options as option}
+		<option value={option}>{option.color}</option>
+	{/each}
+</select>
+
+<svelte:component this={selected.component}/>
+```
+
+### `<svelte:component>`
+
+You can add event listeners (including modifiers) to the window object with.
+
+```sveltehtml
+<svelte:window on:keydown={handleKeydown}/>
+```
+
+### `<svelte:window>`
+
+We can also bind to certain properties of window, such as `scrollY`. 
+
+```sveltehtml
+<svelte:window bind:scrollY={y}/>
+```
+
+The list of properties you can bind to is as follows:
+
+- `innerWidth` 
+- `innerHeight`
+- `outerWidth`
+- `outerHeight`
+- `scrollX`
+- `scrollY`
+- `online` — an alias for window.navigator.onLine
+
+All except scrollX and scrollY are readonly.
+
+[Parallax Example](https://svelte.dev/tutorial/svelte-window-bindings)
+
+### `<svelte:body>`
+
+Allows you to listen for events that fire on document.body. This is useful with the mouseenter and mouseleave events, 
+which don't fire on window.
+
+```sveltehtml
+<svelte:body
+	on:mouseenter={handleMouseenter}
+	on:mouseleave={handleMouseleave}
+/>
+```
+
+### `<svelte:head>`
+
+Allows you to insert elements inside the `<head>` of your document
+
+```sveltehtml
+<svelte:head>
+  <link rel="stylesheet" href="tutorial/dark-theme.css">
+</svelte:head>
+```
+
+### `<svelte:options>`
+
+Allows you to specify compiler options.
+
+```sveltehtml
+<svelte:options immutable={true}/>
+```
+
+or even simpler
+
+```sveltehtml
+<svelte:options immutable/>
+```
+
+[Todos Example](https://svelte.dev/tutorial/svelte-options)
