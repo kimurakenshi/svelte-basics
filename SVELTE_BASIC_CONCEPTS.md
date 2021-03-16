@@ -92,7 +92,7 @@
 
 A component is Svelte has the following structure:
 
-```sveltehtml
+```svelte
 <script>
 	let name = 'world';
 </script>
@@ -109,7 +109,7 @@ A component is Svelte has the following structure:
 
 ### Shorthand attributes
 
-```sveltehtml
+```svelte
 <script>
 	let src = 'tutorial/image.gif';
 	let name = 'Rick Astley';
@@ -120,7 +120,7 @@ A component is Svelte has the following structure:
 
 ### Render HTML directly into a component
 
-```sveltehtml
+```svelte
 <script>
     let htmlString = '<p>Rick Astley</p>';
 </script>
@@ -150,7 +150,7 @@ const app = new App({
 
 ### Click handler example
 
-```sveltehtml
+```svelte
 <script>
 let count = 0;
 
@@ -171,7 +171,7 @@ Svelte automatically updates the DOM when your component's state changes.
 Often, some parts of a component's state need to be computed from other parts (such as a fullname derived 
 from a firstname and a lastname), and recomputed whenever they change:
 
-```sveltehtml
+```svelte
 <script>
     let count = 0;
     // re-run this code whenever any of the referenced values change
@@ -191,13 +191,13 @@ from a firstname and a lastname), and recomputed whenever they change:
 
 Log the value of a state variable whenever it changes
 
-```sveltehtml
+```svelte
 $: console.log(`the count is ${count}`);
 ```
 
 Group statements together with a block
 
-```sveltehtml
+```svelte
 $: {
         console.log(`the count is ${count}`);
         alert(`I SAID THE COUNT IS ${count}`);
@@ -206,7 +206,7 @@ $: {
 
 You can even put the $: in front of things like if blocks:
 
-```sveltehtml
+```svelte
 $: if (count >= 10) {
         alert(`count is dangerously high!`);
         count = 9;
@@ -236,7 +236,7 @@ foo.bar = 'baz';
 
 Props are declared with the `export` keyword:
 
-```sveltehtml
+```svelte
 <script>
 	export let answer;
 </script>
@@ -246,7 +246,7 @@ Props are declared with the `export` keyword:
 
 If you have an object of properties, you can 'spread' them onto a component instead of specifying each one:
 
-```sveltehtml
+```svelte
 <script>
   import Info from './Info.svelte';
 
@@ -263,7 +263,7 @@ If you have an object of properties, you can 'spread' them onto a component inst
 
 And the above object is matching the properties declared in the `Info` component:
 
-```sveltehtml
+```svelte
 <script>
 	export let name;
 	export let version;
@@ -276,7 +276,7 @@ And the above object is matching the properties declared in the `Info` component
 
 ### If blocks
 
-```sveltehtml
+```svelte
 {#if user.loggedIn}
 	<button on:click={toggle}>
 		Log out
@@ -286,7 +286,7 @@ And the above object is matching the properties declared in the `Info` component
 
 ### Else blocks
 
-```sveltehtml
+```svelte
 {#if user.loggedIn}
 	<button on:click={toggle}>
 		Log out
@@ -300,7 +300,7 @@ And the above object is matching the properties declared in the `Info` component
 
 ### Else If blocks
 
-```sveltehtml
+```svelte
 {#if x > 10}
 	<p>{x} is greater than 10</p>
 {:else if 5 > x}
@@ -312,7 +312,7 @@ And the above object is matching the properties declared in the `Info` component
 
 ### Each blocks
 
-```sveltehtml
+```svelte
 <ul>
 	{#each cats as cat} 
 		<li><a target="_blank" href="https://www.youtube.com/watch?v={cat.id}">
@@ -331,7 +331,7 @@ By default, when you modify the value of an each block, it will add and remove i
 and update any values that have changed. That might not be what you want. If Instead, we'd like to remove only what has changed
 and leave the rest unaffected, we could use an unique identifier for the each block:
 
-```sveltehtml
+```svelte
 {#each things as thing (thing.id)}
 	<Thing current={thing.color}/>
 {/each}
@@ -340,7 +340,7 @@ The (thing.id) tells Svelte how to figure out what changed.
 
 ### Await blocks
 
-```sveltehtml
+```svelte
 {#await promise}
 	<p>...waiting</p>
 {:then number}
@@ -353,7 +353,7 @@ The (thing.id) tells Svelte how to figure out what changed.
 If you know that your promise can't reject, you can omit the catch block. 
 You can also omit the first block if you don't want to show anything until the promise resolves:
 
-```sveltehtml
+```svelte
 {#await promise then value}
 	<p>the value is {value}</p>
 {/await}
@@ -363,14 +363,14 @@ You can also omit the first block if you don't want to show anything until the p
 
 As we've briefly seen already, you can listen to any event on an element with the on: directive:
 
-```sveltehtml
+```svelte
 <div on:mousemove={handleMousemove}>
 	The mouse position is {m.x} x {m.y}
 </div>
 ```
 ### Event Handlers Inline:
 
-```sveltehtml
+```svelte
 <div on:mousemove="{e => m = { x: e.clientX, y: e.clientY }}">
 	The mouse position is {m.x} x {m.y}
 </div>
@@ -378,7 +378,7 @@ As we've briefly seen already, you can listen to any event on an element with th
 
 ### Event Modifiers
 
-```sveltehtml
+```svelte
 <button on:click|once={handleClick}>
 	Click me
 </button>
@@ -403,7 +403,7 @@ Components can also dispatch events. To do so, they must create an event dispatc
 > `createEventDispatcher` must be called when the component is first instantiated — you can't do it later inside e.g. a setTimeout 
 callback. This links dispatch to the component instance.
 
-```sveltehtml
+```svelte
 <script>
 	import { createEventDispatcher } from 'svelte';
 
@@ -419,7 +419,7 @@ callback. This links dispatch to the component instance.
 
 and to listen to this event We would do:
 
-```sveltehtml
+```svelte
 <SomeComponent on:message={handleMessage}/>
 ```
 
@@ -434,7 +434,7 @@ An `on:message` event directive without a value means 'forward all message event
 
 In the following component hierarchy:
 
-```sveltehtml
+```svelte
 <App>
   <Outer>
     <Inner/>
@@ -444,7 +444,7 @@ In the following component hierarchy:
 
 Outer component can forward events emitted by Inner component like so:
 
-```sveltehtml
+```svelte
 <script>
 	import Inner from './Inner.svelte';
 </script>
@@ -463,7 +463,7 @@ Sometimes it's useful to break that rule and that the reason `bind` exists.
 
 ### Text Inputs
 
-```sveltehtml
+```svelte
 <input bind:value={name}>
 ```
 
@@ -472,7 +472,7 @@ but changes to the input value will update name.
 
 ### Checkbox Inputs
 
-```sveltehtml
+```svelte
 <script>
   let yes = false;
 </script>
@@ -485,7 +485,7 @@ but changes to the input value will update name.
 If you have multiple inputs relating to the same value, you can use `bind:group` along with the value attribute. 
 Radio inputs in the same group are mutually exclusive; checkbox inputs in the same group form an array of selected values.
 
-```sveltehtml
+```svelte
 <script>
 	let scoops = 1;
 	let flavours = ['Mint choc chip'];
@@ -526,7 +526,7 @@ Radio inputs in the same group are mutually exclusive; checkbox inputs in the sa
 
 ### Textarea Inputs
 
-```sveltehtml
+```svelte
 <script>
   let value = `Some words are *italic*, some are **bold**`;
 </script>
@@ -536,7 +536,7 @@ Radio inputs in the same group are mutually exclusive; checkbox inputs in the sa
 
 ### Select
 
-```sveltehtml
+```svelte
 <script>
 	let questions = [
 		{ id: 1, text: `Where did you go to school?` },
@@ -578,7 +578,7 @@ Radio inputs in the same group are mutually exclusive; checkbox inputs in the sa
 
 A select can have a multiple attribute, in which case it will populate an array rather than selecting a single value:
 
-```sveltehtml
+```svelte
 <script>
   let menu = [
     'Cookies and cream',
@@ -601,7 +601,7 @@ A select can have a multiple attribute, in which case it will populate an array 
 
 Elements with a `contenteditable="true"` attribute support `textContent` and `innerHTML` bindings:
 
-```sveltehtml
+```svelte
 <div
 	contenteditable="true"
 	bind:innerHTML={html}
@@ -612,7 +612,7 @@ Elements with a `contenteditable="true"` attribute support `textContent` and `in
 
 You can even bind to properties inside an each block.
 
-```sveltehtml
+```svelte
 {#each todos as todo}
 	<div class:done={todo.done}>
 		<input
@@ -659,7 +659,7 @@ Videos additionally have readonly `videoWidth` and `videoHeight` bindings.
 
 Every `block-level` element has clientWidth, clientHeight, offsetWidth and offsetHeight read-only bindings:
 
-```sveltehtml
+```svelte
 <div bind:clientWidth={w} bind:clientHeight={h}>
 	<span style="font-size: {size}px">{text}</span>
 </div>
@@ -670,7 +670,7 @@ Every `block-level` element has clientWidth, clientHeight, offsetWidth and offse
 The readonly this binding applies to every element (and component) and allows you to obtain a reference to rendered elements. 
 For example, we can get a reference to a `<canvas>` element:
 
-```sveltehtml
+```svelte
 <canvas
 	bind:this={canvas}
 	width={32}
@@ -685,7 +685,7 @@ For example, we can get a reference to a `<canvas>` element:
 Just as you can bind to properties of DOM elements, you can bind to component props. For example, we can bind to the value prop of this `<Keypad>` component as though it were a 
 form element:
 
-```sveltehtml
+```svelte
 <script>
   import Keypad from './Keypad.svelte';
 
@@ -711,7 +711,7 @@ form element:
 
 Runs after the component is first rendered to the DOM. 
 
-```sveltehtml
+```svelte
 <script>
 	import { onMount } from 'svelte';
 
@@ -736,7 +736,7 @@ Runs after the component is first rendered to the DOM.
 
 To run code when your component is destroyed.
 
-```sveltehtml
+```svelte
 <script>
 	import { onDestroy } from 'svelte';
 
@@ -752,7 +752,7 @@ To run code when your component is destroyed.
 The `beforeUpdate` function schedules work to happen immediately before the DOM has been updated. 
 `afterUpdate` is its counterpart, used for running code once the DOM is in sync with your data.
 
-```sveltehtml
+```svelte
 <script>
 	import { beforeUpdate, afterUpdate } from 'svelte';
 
@@ -786,7 +786,7 @@ You can see that behaviour in this example. Select a range of text and hit the t
 the current selection is cleared and the cursor jumps, annoyingly, to the end. We can fix this by importing tick ...and running 
 it immediately before we set this.selectionStart and this.selectionEnd at the end of handleKeydown:
 
-```sveltehtml
+```svelte
 <script>
 	import { tick } from 'svelte';
 
@@ -840,7 +840,7 @@ be notified whenever the store value changes. A writable store, has `set` and `u
 
 To avoid boilerplate code like this:
 
-```sveltehtml
+```svelte
 <script>
 	import { onDestroy } from 'svelte';
 	import { count } from './stores.js';
@@ -860,7 +860,7 @@ To avoid boilerplate code like this:
 
 We can reference a store value by prefixing the store name with `$`:
 
-```sveltehtml
+```svelte
 <script>
 	import { count } from './stores.js';
 	import Incrementer from './Incrementer.svelte';
@@ -879,7 +879,7 @@ We can reference a store value by prefixing the store name with `$`:
 
 For those cased where it does not make sense to allow components to set the store values from the outside.
 
-```sveltehtml
+```svelte
 import { readable } from 'svelte/store';
 
 export const time = readable(new Date(), function start(set) {
@@ -955,7 +955,7 @@ export const greeting = derived(
 
 and the following component:
 
-```sveltehtml
+```svelte
 <script>
 	import { name, greeting } from './stores.js';
 </script>
@@ -977,7 +977,7 @@ Svelte includes tools to help you build slick user interfaces that use animation
 
 ### Tweened
 
-```sveltehtml
+```svelte
 <script>
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
@@ -1014,7 +1014,7 @@ Svelte includes tools to help you build slick user interfaces that use animation
 
 The spring function is an alternative to tweened that often works better for values that are frequently changing.
 
-```sveltehtml
+```svelte
 <script>
   import { spring } from 'svelte/motion';
 
@@ -1059,7 +1059,7 @@ Svelte makes this very easy with the `transition` directive.
 
 ### Basic
 
-```sveltehtml
+```svelte
 <script>
 	import { fade } from 'svelte/transition';
 	let visible = true;
@@ -1079,7 +1079,7 @@ Svelte makes this very easy with the `transition` directive.
 
 ### Adding parameters
 
-```sveltehtml
+```svelte
 <script>
   import { fly } from 'svelte/transition';
   let visible = true;
@@ -1101,7 +1101,7 @@ Svelte makes this very easy with the `transition` directive.
 
 Instead of the transition directive, an element can have an in or an out directive, or both together. 
 
-```sveltehtml
+```svelte
 <script>
   import { fade, fly } from 'svelte/transition';
   let visible = true;
@@ -1123,7 +1123,7 @@ Instead of the transition directive, an element can have an in or an out directi
 
 Svelte dispatches events that you can listen to like any other DOM event:
 
-```sveltehtml
+```svelte
 <p
 	transition:fly="{{ y: 200, duration: 2000 }}"
 	on:introstart="{() => status = 'intro started'}"
@@ -1145,7 +1145,7 @@ drags the slider.
 
 We can achieve this with a local transition, which only plays when the immediate parent block is added or removed:
 
-```sveltehtml
+```svelte
 <script>
 	import { slide } from 'svelte/transition';
 
@@ -1200,7 +1200,7 @@ We used deferred transitions to create the illusion of motion as elements move f
 To complete the illusion, we also need to apply motion to the elements that aren't transitioning. 
 For this, we use the `animate` directive.
 
-```sveltehtml
+```svelte
 <script>
 	import { quintOut } from 'svelte/easing';
 	import { crossfade } from 'svelte/transition';
@@ -1397,7 +1397,7 @@ alongside the element it belongs to.
 
 Example:
 
-```sveltehtml
+```svelte
 <button use:longpress={duration} />
 ```
 
@@ -1409,7 +1409,7 @@ If you need to pass multiple arguments to an action, combine them into a single 
 
 Like any other attribute, you can specify classes with a JavaScript attribute, seen here:
 
-```sveltehtml
+```svelte
 <button
 	class="{current === 'foo' ? 'selected' : ''}"
 	on:click="{() => current = 'foo'}"
@@ -1418,7 +1418,7 @@ Like any other attribute, you can specify classes with a JavaScript attribute, s
 
 Or even simpler than that:
 
-```sveltehtml
+```svelte
 <button
 	class:selected="{current === 'foo'}"
 	on:click="{() => current = 'foo'}"
@@ -1429,7 +1429,7 @@ Or even simpler than that:
 
 Often, the name of the class will be the same as the name of the value it depends on:
 
-```sveltehtml
+```svelte
 <div class:big={big}>
 	<!-- ... -->
 </div>
@@ -1437,7 +1437,7 @@ Often, the name of the class will be the same as the name of the value it depend
 
 could be simplified to:
 
-```sveltehtml
+```svelte
 <div class:big>
 	<!-- ... -->
 </div>
@@ -1449,7 +1449,7 @@ Before a component can accept children, it needs to know where to put them. We d
 
 App component:
 
-```sveltehtml
+```svelte
 <script>
 	import Box from './Box.svelte';
 </script>
@@ -1462,7 +1462,7 @@ App component:
 
 Box component:
 
-```sveltehtml
+```svelte
 <div class="box">
 	<slot></slot>
 </div>
@@ -1472,7 +1472,7 @@ Box component:
 
 A component can specify fallbacks for any slots that are left empty, by putting content inside the `<slot>` element:
 
-```sveltehtml
+```svelte
 <div class="box">
   <div class="box">
     <slot>
@@ -1484,7 +1484,7 @@ A component can specify fallbacks for any slots that are left empty, by putting 
 
 So we can do:
 
-```sveltehtml
+```svelte
 <Box>
   <h2>Hello!</h2>
   <p>This is a box. It can contain anything.</p>
@@ -1497,7 +1497,7 @@ So we can do:
 
 To have control over placement when we need multiple slots we use `slot=slotName`.
 
-```sveltehtml
+```svelte
 <script>
   import ContactCard from './ContactCard.svelte';
 </script>
@@ -1516,7 +1516,7 @@ To have control over placement when we need multiple slots we use `slot=slotName
 
 And in the `ContactCard` component:
 
-```sveltehtml
+```svelte
 <article class="contact-card">
 	<h2>
 		<slot name="name">
@@ -1547,7 +1547,7 @@ You can do this by checking the properties of the special `$$slots` variable.
 `$$slots` is an object whose keys are the names of the slots passed in by the parent component. 
 If the parent leaves a slot empty, then $$slots will not have an entry for that slot.
 
-```sveltehtml
+```svelte
 {#if $$slots.comments}
 	<div class="discussion">
 		<h3>Comments</h3>
@@ -1564,7 +1564,7 @@ Example:
 
 Hoverable component
 
-```sveltehtml
+```svelte
 <script>
 	let hovering;
 
@@ -1584,7 +1584,7 @@ Hoverable component
 
 Parent component
 
-```sveltehtml
+```svelte
 <script>
 	import Hoverable from './Hoverable.svelte';
 </script>
@@ -1681,7 +1681,7 @@ Allows a component to contain itself recursively.
 In this example the main component represents a folder and in order to represent a tree view
 where the component can render itself we could do something like this:
 
-```sveltehtml
+```svelte
 {#if file.type === 'folder'}
 	<svelte:self {...file}/>
 {:else}
@@ -1693,7 +1693,7 @@ where the component can render itself we could do something like this:
 
 To dynamically render a component.
 
-```sveltehtml
+```svelte
 <svelte:component this={selected.component}/>
 ```
 
@@ -1701,7 +1701,7 @@ The `this` value can be any component constructor, or a falsy value — if it's 
 
 For example:
 
-```sveltehtml
+```svelte
 <script>
 	import RedThing from './RedThing.svelte';
 	import GreenThing from './GreenThing.svelte';
@@ -1729,7 +1729,7 @@ For example:
 
 You can add event listeners (including modifiers) to the window object with.
 
-```sveltehtml
+```svelte
 <svelte:window on:keydown={handleKeydown}/>
 ```
 
@@ -1737,7 +1737,7 @@ You can add event listeners (including modifiers) to the window object with.
 
 We can also bind to certain properties of window, such as `scrollY`. 
 
-```sveltehtml
+```svelte
 <svelte:window bind:scrollY={y}/>
 ```
 
@@ -1760,7 +1760,7 @@ All except scrollX and scrollY are readonly.
 Allows you to listen for events that fire on document.body. This is useful with the mouseenter and mouseleave events, 
 which don't fire on window.
 
-```sveltehtml
+```svelte
 <svelte:body
 	on:mouseenter={handleMouseenter}
 	on:mouseleave={handleMouseleave}
@@ -1771,7 +1771,7 @@ which don't fire on window.
 
 Allows you to insert elements inside the `<head>` of your document
 
-```sveltehtml
+```svelte
 <svelte:head>
   <link rel="stylesheet" href="tutorial/dark-theme.css">
 </svelte:head>
@@ -1781,13 +1781,13 @@ Allows you to insert elements inside the `<head>` of your document
 
 Allows you to specify compiler options.
 
-```sveltehtml
+```svelte
 <svelte:options immutable={true}/>
 ```
 
 or even simpler
 
-```sveltehtml
+```svelte
 <svelte:options immutable/>
 ```
 
@@ -1803,7 +1803,7 @@ five of these audio players simultaneously; it would be better if playing one st
 We can do that by declaring a `<script context="module">` block. Code contained inside it will run once, when the module 
 first evaluates, rather than when a component is instantiated.
 
-```sveltehtml
+```svelte
 <script context="module">
 	let current;
 </script>
@@ -1822,7 +1822,7 @@ function stopOthers() {
 
 Anything exported from a context="module" script block becomes an export from the module itself. 
 
-```sveltehtml
+```svelte
 <script context="module">
 	const elements = new Set();
 
@@ -1836,7 +1836,7 @@ Anything exported from a context="module" script block becomes an export from th
 
 ...we can then import it 
 
-```sveltehtml
+```svelte
 <script >
   import AudioPlayer, { stopAll } from './AudioPlayer.svelte';
 </script>
