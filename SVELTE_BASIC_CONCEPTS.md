@@ -1849,7 +1849,7 @@ Anything exported from a context="module" script block becomes an export from th
 One approach is to use console.log(...) inside your markup. If you want to pause execution, though, you can use 
 the `{@debug ...}` tag with a comma-separated list of values you want to inspect:
 
-```sveltehtml
+```svelte
 {@debug user}
 
 <h1>Hello {user.firstname}!</h1>
