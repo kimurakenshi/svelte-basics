@@ -68,6 +68,7 @@
   * [Named slots](#named-slots)
   * [Checking for slot content](#checking-for-slot-content)
   * [Slot props](#slot-props)
+- [Context API](#context-api)
 
 ## Introduction
 
@@ -1539,4 +1540,63 @@ If the parent leaves a slot empty, then $$slots will not have an entry for that 
 
 ### Slot props
 
-[TBD]
+To pass data back to a parent component we can expose a prop using the `let` directive:
+
+Example:
+
+Hoverable component
+
+```sveltehtml
+<script>
+	let hovering;
+
+	function enter() {
+		hovering = true;
+	}
+
+	function leave() {
+		hovering = false;
+	}
+</script>
+
+<div on:mouseenter={enter} on:mouseleave={leave}>
+	<slot hovering={hovering}></slot>
+</div>
+```
+
+Parent component
+
+```sveltehtml
+<script>
+	import Hoverable from './Hoverable.svelte';
+</script>
+
+<style>
+	div {
+		padding: 1em;
+		margin: 0 0 1em 0;
+		background-color: #eee;
+	}
+
+	.active {
+		background-color: #ff3e00;
+		color: white;
+	}
+</style>
+
+<Hoverable let:hovering={active}>
+	<div class:active>
+		{#if active}
+			<p>I am being hovered upon.</p>
+		{:else}
+			<p>Hover over me!</p>
+		{/if}
+	</div>
+</Hoverable>
+```
+
+> Named slots can also have props; use the let directive on an element with a slot="..." attribute, instead of on the component itself.
+
+## Context API
+
+`[TBD]`
