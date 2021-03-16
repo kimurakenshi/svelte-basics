@@ -713,6 +713,8 @@ Runs after the component is first rendered to the DOM.
 > fetching data that should be loaded lazily once the component has been mounted in the DOM.
 
 > If the `onMount` callback returns a function, that function will be called when the component is destroyed.
+> It seems `onDestroy` is not necessary in this case unless we have to perform other kind of cleanup that cannot
+> be done during the definition of `onMount`.
 
 ### onDestroy
 
@@ -1599,4 +1601,57 @@ Parent component
 
 ## Context API
 
-`[TBD]`
+The context API provides a mechanism for components to 'talk' to each other without passing around data and functions as 
+props, or dispatching lots of events.
+
+There are two halves to the context API — `setContext` and `getContext`. If a component calls `setContext(key, context)`, 
+then any child component can retrieve the context with `const context = getContext(key)`.
+
+### setContext
+
+```js
+import { onMount, setContext } from 'svelte';
+import { mapbox, key } from './mapbox.js';
+
+setContext(key, {
+	getMap: () => map
+});
+```
+
+### getContext
+
+```js
+import { getContext } from 'svelte';
+import { mapbox, key } from './mapbox.js';
+
+const { getMap } = getContext(key);
+const map = getMap();
+```
+
+The context object can be anything you like. Like, `setContext` and `getContext` must be called during component 
+initialisation.
+
+### Context keys
+
+```js
+const key = {};
+```
+
+We can use anything as a key but the downside of using a string is that different component libraries might accidentally 
+use the same one; using an object literal means the keys are guaranteed not to conflict in any circumstance 
+(since an object only has referential equality to itself)
+
+### Contexts vs. Stores
+
+Contexts and stores seem similar. They differ in that stores are available to any part of an app, while a context is only available to a component 
+and its descendants. This can be helpful if you want to use several instances of a component without the state of one interfering with the state 
+of the others.
+
+In fact, you might use the two together. Since context is not reactive, values that change over time should be represented 
+as stores:
+
+```js
+const { these, are, stores } = getContext(key);
+```
+
+## Special Elements
