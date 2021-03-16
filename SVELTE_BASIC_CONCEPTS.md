@@ -1373,3 +1373,41 @@ Example:
 If you need to pass multiple arguments to an action, combine them into a single object, as in `use:longpress={{duration, spiciness}}`
 
 [Full example](https://svelte.dev/tutorial/adding-parameters-to-actions)
+
+## Classes
+
+Like any other attribute, you can specify classes with a JavaScript attribute, seen here:
+
+```sveltehtml
+<button
+	class="{current === 'foo' ? 'selected' : ''}"
+	on:click="{() => current = 'foo'}"
+>foo</button>
+```
+
+Or even simpler than that:
+
+```sveltehtml
+<button
+	class:selected="{current === 'foo'}"
+	on:click="{() => current = 'foo'}"
+>foo</button>
+```
+
+### Shorthand class directive
+
+Often, the name of the class will be the same as the name of the value it depends on:
+
+```sveltehtml
+<div class:big={big}>
+	<!-- ... -->
+</div>
+```
+
+could be simplified to:
+
+```sveltehtml
+<div class:big>
+	<!-- ... -->
+</div>
+```
