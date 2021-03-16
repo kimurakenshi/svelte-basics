@@ -1,4 +1,5 @@
 # Svelte
+
 - [Introduction](#introduction)
   * [Basic Component Structure](#basic-component-structure)
   * [Shorthand attributes](#shorthand-attributes)
@@ -56,6 +57,17 @@
   * [Transition events](#transition-events)
   * [Local transitions](#local-transitions)
   * [Deferred transitions](#deferred-transitions)
+- [Animations](#animations)
+- [Actions](#actions)
+  * [Declaration](#declaration)
+  * [Adding Parameters](#adding-parameters)
+- [Classes](#classes)
+  * [Shorthand class directive](#shorthand-class-directive)
+- [Component composition](#component-composition)
+  * [Slot fallback](#slot-fallback)
+  * [Named slots](#named-slots)
+  * [Checking for slot content](#checking-for-slot-content)
+  * [Slot props](#slot-props)
 
 ## Introduction
 
