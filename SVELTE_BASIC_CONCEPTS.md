@@ -69,6 +69,22 @@
   * [Checking for slot content](#checking-for-slot-content)
   * [Slot props](#slot-props)
 - [Context API](#context-api)
+  * [setContext](#setcontext)
+  * [getContext](#getcontext)
+  * [Context keys](#context-keys)
+  * [Contexts vs. Stores](#contexts-vs-stores)
+- [Special Elements](#special-elements)
+  * [`<svelte:self>`](#--svelte-self--)
+  * [`<svelte:component>`](#--svelte-component--)
+  * [`<svelte:component>`](#--svelte-component---1)
+  * [`<svelte:window>`](#--svelte-window--)
+  * [`<svelte:body>`](#--svelte-body--)
+  * [`<svelte:head>`](#--svelte-head--)
+  * [`<svelte:options>`](#--svelte-options--)
+- [Module context](#module-context)
+  * [Sharing code](#sharing-code)
+  * [Exports](#exports)
+- [Debugging](#debugging)
 
 ## Introduction
 
@@ -1776,3 +1792,65 @@ or even simpler
 ```
 
 [Todos Example](https://svelte.dev/tutorial/svelte-options)
+
+## Module context
+
+### Sharing code
+
+Very occasionally, you'll need to run some code outside of an individual component instance. For example, you can play all 
+five of these audio players simultaneously; it would be better if playing one stopped all the others.
+
+We can do that by declaring a `<script context="module">` block. Code contained inside it will run once, when the module 
+first evaluates, rather than when a component is instantiated.
+
+```sveltehtml
+<script context="module">
+	let current;
+</script>
+```
+
+It's now possible for the components to 'talk' to each other without any state management:
+
+```js
+function stopOthers() {
+	if (current && current !== audio) current.pause();
+	current = audio;
+}
+```
+
+### Exports
+
+Anything exported from a context="module" script block becomes an export from the module itself. 
+
+```sveltehtml
+<script context="module">
+	const elements = new Set();
+
+	export function stopAll() {
+		elements.forEach(element => {
+			element.pause();
+		});
+	}
+</script>
+```
+
+...we can then import it 
+
+```sveltehtml
+<script >
+  import AudioPlayer, { stopAll } from './AudioPlayer.svelte';
+</script>
+```
+
+> You can't have a default export, because the component is the default export.
+
+## Debugging
+
+One approach is to use console.log(...) inside your markup. If you want to pause execution, though, you can use 
+the `{@debug ...}` tag with a comma-separated list of values you want to inspect:
+
+```sveltehtml
+{@debug user}
+
+<h1>Hello {user.firstname}!</h1>
+```
