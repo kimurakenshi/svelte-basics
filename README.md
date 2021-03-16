@@ -1,4 +1,4 @@
-# Svelte Basics
+# Svelte Resources
 
 A summary of basic concepts for Svelte beginners like me based on the [official tutorial](https://svelte.dev/tutorial/basics).
 
