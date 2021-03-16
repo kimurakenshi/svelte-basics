@@ -1329,3 +1329,47 @@ For this, we use the `animate` directive.
 	}
 </style>
 ```
+
+## Actions
+
+Actions are essentially element-level lifecycle functions. They're useful for things like:
+
+* interfacing with third-party libraries
+* lazy-loaded images
+* tooltips
+* adding custom event handlers
+
+### Declaration
+
+An action function receives a node and some optional parameters, and returns an action object. That object can have a 
+`destroy` function, which is called when the element is unmounted.
+
+```js
+export function pannable(node) {
+	// setup work goes here...
+
+	return {
+		destroy() {
+			// ...cleanup goes here
+		}
+	};
+}
+```
+
+[A practical example](https://svelte.dev/tutorial/actions)
+
+
+### Adding Parameters
+
+Like transitions and animations, an action can take an argument, which the action function will be called with 
+alongside the element it belongs to.
+
+Example:
+
+```sveltehtml
+<button use:longpress={duration} />
+```
+
+If you need to pass multiple arguments to an action, combine them into a single object, as in `use:longpress={{duration, spiciness}}`
+
+[Full example](https://svelte.dev/tutorial/adding-parameters-to-actions)
