@@ -1411,3 +1411,120 @@ could be simplified to:
 	<!-- ... -->
 </div>
 ```
+
+## Component composition
+
+Before a component can accept children, it needs to know where to put them. We do this with the `<slot>` element. 
+
+App component:
+
+```sveltehtml
+<script>
+	import Box from './Box.svelte';
+</script>
+
+<Box>
+	<h2>Hello!</h2>
+	<p>This is a box. It can contain anything.</p>
+</Box>
+```
+
+Box component:
+
+```sveltehtml
+<div class="box">
+	<slot></slot>
+</div>
+```
+
+### Slot fallback
+
+A component can specify fallbacks for any slots that are left empty, by putting content inside the `<slot>` element:
+
+```sveltehtml
+<div class="box">
+  <div class="box">
+    <slot>
+      <em>no content was provided</em>
+    </slot>
+  </div>
+</div>
+```
+
+So we can do:
+
+```sveltehtml
+<Box>
+  <h2>Hello!</h2>
+  <p>This is a box. It can contain anything.</p>
+</Box>
+
+<Box/>
+```
+
+### Named slots
+
+To have control over placement when we need multiple slots we use `slot=slotName`.
+
+```sveltehtml
+<script>
+  import ContactCard from './ContactCard.svelte';
+</script>
+
+<ContactCard>
+	<span slot="name">
+		P. Sherman
+	</span>
+
+  <span slot="address">
+		42 Wallaby Way<br>
+		Sydney
+	</span>
+</ContactCard>
+```
+
+And in the `ContactCard` component:
+
+```sveltehtml
+<article class="contact-card">
+	<h2>
+		<slot name="name">
+			<span class="missing">Unknown name</span>
+		</slot>
+	</h2>
+
+	<div class="address">
+		<slot name="address">
+			<span class="missing">Unknown address</span>
+		</slot>
+	</div>
+
+	<div class="email">
+		<slot name="email">
+			<span class="missing">Unknown email</span>
+		</slot>
+	</div>
+</article>
+```
+
+### Checking for slot content
+
+In some cases, you may want to control parts of your component based on whether the parent passes in content for a certain slot. 
+Perhaps you have a wrapper around that slot, and you don't want to render it if the slot is empty.
+You can do this by checking the properties of the special `$$slots` variable.
+
+`$$slots` is an object whose keys are the names of the slots passed in by the parent component. 
+If the parent leaves a slot empty, then $$slots will not have an entry for that slot.
+
+```sveltehtml
+{#if $$slots.comments}
+	<div class="discussion">
+		<h3>Comments</h3>
+		<slot name="comments"></slot>
+	</div>
+{/if}
+```
+
+### Slot props
+
+[TBD]
