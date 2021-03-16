@@ -1,4 +1,4 @@
-# Svelte 
+# Svelte
 - [Introduction](#introduction)
   * [Basic Component Structure](#basic-component-structure)
   * [Shorthand attributes](#shorthand-attributes)
@@ -47,6 +47,15 @@
   * [Custom stores](#custom-stores)
   * [Store bindings](#store-bindings)
 - [Motion](#motion)
+  * [Tweened](#tweened)
+  * [Spring](#spring)
+- [Transitions](#transitions)
+  * [Basic](#basic)
+  * [Adding parameters](#adding-parameters)
+  * [In and Out](#in-and-out)
+  * [Transition events](#transition-events)
+  * [Local transitions](#local-transitions)
+  * [Deferred transitions](#deferred-transitions)
 
 ## Introduction
 
@@ -933,4 +942,224 @@ and the following component:
 
 ## Motion
 
-[TBD]
+Svelte includes tools to help you build slick user interfaces that use animation to communicate changes.
+
+### Tweened
+
+```sveltehtml
+<script>
+	import { tweened } from 'svelte/motion';
+	import { cubicOut } from 'svelte/easing';
+
+	const progress = tweened(0, {
+		duration: 400,
+		easing: cubicOut
+	});
+</script>
+
+<style>
+	progress {
+		display: block;
+		width: 100%;
+	}
+</style>
+
+<progress value={$progress}></progress>
+
+<button on:click="{() => progress.set(0)}">
+	0%
+</button>
+
+<button on:click="{() => progress.set(0.5)}">
+	50%
+</button>
+
+<button on:click="{() => progress.set(1)}">
+	100%
+</button>
+```
+
+### Spring
+
+The spring function is an alternative to tweened that often works better for values that are frequently changing.
+
+```sveltehtml
+<script>
+  import { spring } from 'svelte/motion';
+
+  let coords = spring({ x: 50, y: 50 }, {
+    stiffness: 0.1,
+    damping: 0.25
+  });
+
+  let size = spring(10);
+</script>
+
+<style>
+  svg { width: 100%; height: 100% }
+  circle { fill: #ff3e00 }
+</style>
+
+<div style="position: absolute; right: 1em;">
+  <label>
+    <h3>stiffness ({coords.stiffness})</h3>
+    <input bind:value={coords.stiffness} type="range" min="0" max="1" step="0.01">
+  </label>
+
+  <label>
+    <h3>damping ({coords.damping})</h3>
+    <input bind:value={coords.damping} type="range" min="0" max="1" step="0.01">
+  </label>
+</div>
+
+<svg
+        on:mousemove="{e => coords.set({ x: e.clientX, y: e.clientY })}"
+        on:mousedown="{() => size.set(30)}"
+        on:mouseup="{() => size.set(10)}"
+>
+  <circle cx={$coords.x} cy={$coords.y} r={$size}/>
+</svg>
+```
+
+## Transitions
+
+We can make more appealing user interfaces by gracefully transitioning elements into and out of the DOM. 
+Svelte makes this very easy with the `transition` directive.
+
+### Basic
+
+```sveltehtml
+<script>
+	import { fade } from 'svelte/transition';
+	let visible = true;
+</script>
+
+<label>
+	<input type="checkbox" bind:checked={visible}>
+	visible
+</label>
+
+{#if visible}
+	<p transition:fade>
+		Fades in and out
+	</p>
+{/if}
+```
+
+### Adding parameters
+
+```sveltehtml
+<script>
+  import { fly } from 'svelte/transition';
+  let visible = true;
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={visible}>
+  visible
+</label>
+
+{#if visible}
+  <p transition:fly="{{ y: 200, duration: 2000 }}">
+    Flies in and out
+  </p>
+{/if}
+```
+
+### In and Out 
+
+Instead of the transition directive, an element can have an in or an out directive, or both together. 
+
+```sveltehtml
+<script>
+  import { fade, fly } from 'svelte/transition';
+  let visible = true;
+</script>
+
+<label>
+  <input type="checkbox" bind:checked={visible}>
+  visible
+</label>
+
+{#if visible}
+  <p in:fly="{{ y: 200, duration: 2000 }}" out:fade>
+    Flies in, fades out
+  </p>
+{/if}
+```
+
+### Transition events
+
+Svelte dispatches events that you can listen to like any other DOM event:
+
+```sveltehtml
+<p
+	transition:fly="{{ y: 200, duration: 2000 }}"
+	on:introstart="{() => status = 'intro started'}"
+	on:outrostart="{() => status = 'outro started'}"
+	on:introend="{() => status = 'intro ended'}"
+	on:outroend="{() => status = 'outro ended'}"
+>
+	Flies in and out
+</p>
+```
+
+### Local transitions
+
+Ordinarily, transitions will play on elements when any container block is added or destroyed. In the example here, t
+oggling the visibility of the entire list also applies transitions to individual list elements.
+
+Instead, we'd like transitions to play only when individual items are added and removed — in other words, when the user 
+drags the slider.
+
+We can achieve this with a local transition, which only plays when the immediate parent block is added or removed:
+
+```sveltehtml
+<script>
+	import { slide } from 'svelte/transition';
+
+	let showItems = true;
+	let i = 5;
+	let items = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+</script>
+
+<style>
+	div {
+		padding: 0.5em 0;
+		border-top: 1px solid #eee;
+	}
+</style>
+
+<label>
+	<input type="checkbox" bind:checked={showItems}>
+	show list
+</label>
+
+<label>
+	<input type="range" bind:value={i} max=10>
+
+</label>
+
+{#if showItems}
+	{#each items.slice(0, i) as item}
+		<div transition:slide|local>
+			{item}
+		</div>
+	{/each}
+{/if}
+```
+
+### Deferred transitions
+
+A particularly powerful feature of Svelte's transition engine is the ability to defer transitions, so that they can be coordinated 
+between multiple elements.
+
+We can achieve this effect using the `crossfade` function, which creates a pair of transitions called `send` and `receive`. 
+When an element is 'sent', it looks for a corresponding element being 'received', and generates a transition that transforms
+the element to its counterpart's position and fades it out. When an element is 'received', the reverse happens. If there is no counterpart, the fallback transition is used.
+
+[Full example](https://svelte.dev/tutorial/deferred-transitions)
+
+## Animations
+
+`[TBD]`
