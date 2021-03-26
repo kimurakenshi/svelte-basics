@@ -828,13 +828,37 @@ it immediately before we set this.selectionStart and this.selectionEnd at the en
 
 ## Stores
 
-### Writeable Store
-
-Not all application state belongs inside your application's component hierarchy. Sometimes, 
+Not all application state belongs inside your application's component hierarchy. Sometimes,
 you'll have values that need to be accessed by multiple unrelated components, or by a regular JavaScript module.
 In Svelte, we do this with stores. A store is simply an object with a `subscribe` method that allows interested parties to
-be notified whenever the store value changes. A writable store, has `set` and `update` methods in addition to subscribe.
+be notified whenever the store value changes. 
 
+### Writeable Store
+
+A writable store, has `set` and `update` methods in addition to subscribe.
+
+```svelte
+// store.js
+import { writable } from 'svelte/store';
+
+export const count = writable(0);
+```
+
+and we can use it like this:
+
+```svelte
+<script>
+import { count } from './stores.js';
+
+function decrement() {
+    count.update(n => n - 1);
+}
+
+const unsubscribe = count.subscribe(value => {
+    count_value = value;
+});
+</script>
+```
 
 ### Auto-subscriptions
 
